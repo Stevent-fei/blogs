@@ -1,4 +1,6 @@
 # 新一代 Kubernetes 容器运行时 Containerd 保姆级中文教程
+
+![img.png](img.png)
 在学习 Containerd 之前我们有必要对 Docker 的发展历史做一个简单的回顾，因为这里面牵涉到的组件实战是有点多，有很多我们会经常听到，但是不清楚这些组件到底是干什么用的，比如 libcontainer
 、runc
 、containerd
@@ -8,7 +10,7 @@
 
 ## Docker
 从 Docker 1.11 版本开始，Docker 容器运行就不是简单通过 Docker Daemon 来启动了，而是通过集成 containerd、runc 等多个组件来完成的。虽然 Docker Daemon 守护进程模块在不停的重构，但是基本功能和定位没有太大的变化，一直都是 CS 架构，守护进程负责和 Docker Client 端交互，并管理 Docker 镜像和容器。现在的架构中组件 containerd 就会负责集群节点上容器的生命周期管理，并向上为 Docker Daemon 提供 gRPC 接口。
-
+![img_1.png](img_1.png)
 
 docker 架构
 当我们要创建一个容器的时候，现在 Docker Daemon 并不能直接帮我们创建了，而是请求 containerd
@@ -37,11 +39,11 @@ docker 架构
 
 在 Kubernetes 早期的时候，当时 Docker 实在是太火了，Kubernetes 当然会先选择支持 Docker，而且是通过硬编码的方式直接调用 Docker API，后面随着 Docker 的不断发展以及 Google 的主导，出现了更多容器运行时，Kubernetes 为了支持更多更精简的容器运行时，Google 就和红帽主导推出了 CRI 标准，用于将 Kubernetes 平台和特定的容器运行时（当然主要是为了干掉 Docker）解耦。
 
-## CRI
+### CRI
 （Container Runtime Interface 容器运行时接口）本质上就是 Kubernetes 定义的一组与容器运行时进行交互的接口，所以只要实现了这套接口的容器运行时都可以对接到 Kubernetes 平台上来。不过 Kubernetes 推出 CRI 这套标准的时候还没有现在的统治地位，所以有一些容器运行时可能不会自身就去实现 CRI 接口，于是就有了 shim（垫片）
 ， 一个 shim 的职责就是作为适配器将各种容器运行时本身的接口适配到 Kubernetes 的 CRI 接口上，其中 dockershim
 就是 Kubernetes 对接 Docker 到 CRI 接口上的一个垫片实现。
-
+![img_2.png](img_2.png)
 
 ## cri shim
 Kubelet 通过 gRPC 框架与容器运行时或 shim 进行通信，其中 kubelet 作为客户端，CRI shim（也可能是容器运行时本身）作为服务器。
@@ -53,12 +55,12 @@ CRI 定义的 API(https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/
 则是用来管理 Pod 和容器的生命周期，以及与容器交互的调用（exec/attach/port-forward）等操作，可以通过 kubelet 中的标志 --container-runtime-endpoint
 和 --image-service-endpoint
 来配置这两个服务的套接字。
-
+![img_3.png](img_3.png)
 
 ## kubelet cri
 不过这里同样也有一个例外，那就是 Docker，由于 Docker 当时的江湖地位很高，Kubernetes 是直接内置了 dockershim
 在 kubelet 中的，所以如果你使用的是 Docker 这种容器运行时的话是不需要单独去安装配置适配器之类的，当然这个举动似乎也麻痹了 Docker 公司。
-
+![img_4.png](img_4.png)
 
 ## dockershim
 现在如果我们使用的是 Docker 的话，当我们在 Kubernetes 中创建一个 Pod 的时候，首先就是 kubelet 通过 CRI 接口调用 dockershim
@@ -71,7 +73,7 @@ CRI 定义的 API(https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/
 去真正创建容器。
 
 其实我们仔细观察也不难发现使用 Docker 的话其实是调用链比较长的，真正容器相关的操作其实 containerd 就完全足够了，Docker 太过于复杂笨重了，当然 Docker 深受欢迎的很大一个原因就是提供了很多对用户操作比较友好的功能，但是对于 Kubernetes 来说压根不需要这些功能，因为都是通过接口去操作容器的，所以自然也就可以将容器运行时切换到 containerd 来。
-
+![img_5.png](img_5.png)
 
 切换到containerd
 切换到 containerd 可以消除掉中间环节，操作体验也和以前一样，但是由于直接用容器运行时调度容器，所以它们对 Docker 来说是不可见的。因此，你以前用来检查这些容器的 Docker 工具就不能使用了。
@@ -90,11 +92,11 @@ CRI 定义的 API(https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/
 
 然后到了 containerd 1.1 版本后就去掉了 CRI-Containerd
 这个 shim，直接把适配逻辑作为插件的方式集成到了 containerd 主进程中，现在这样的调用就更加简洁了。
-
+![img_6.png](img_6.png)
 
 ## containerd cri
 与此同时 Kubernetes 社区也做了一个专门用于 Kubernetes 的 CRI 运行时 CRI-O，直接兼容 CRI 和 OCI 规范。
-
+![img_7.png](img_7.png)
 
 ## cri-o
 这个方案和 containerd 的方案显然比默认的 dockershim 简洁很多，不过由于大部分用户都比较习惯使用 Docker，所以大家还是更喜欢使用 dockershim
@@ -126,7 +128,7 @@ containerd 可用作 Linux 和 Windows 的守护程序，它管理其主机系�
 
 ## containerd 架构
 上图是 containerd 官方提供的架构图，可以看出 containerd 采用的也是 C/S 架构，服务端通过 unix domain socket 暴露低层的 gRPC API 接口出去，客户端通过这些 API 管理节点上的容器，每个 containerd 只负责一台机器，Pull 镜像，对容器的操作（启动、停止等），网络，存储都是由 containerd 完成。具体运行容器由 runc 负责，实际上只要是符合 OCI 规范的容器都可以支持。
-
+![img_8.png](img_8.png)
 
 点击上方图片，打开小程序，『美团外卖』红包天天免费领！
 
@@ -137,7 +139,7 @@ containerd 可用作 Linux 和 Windows 的守护程序，它管理其主机系�
 Snapshot Plugin
 : 用来管理容器镜像的文件系统快照，镜像中的每一层都会被解压成文件系统快照，类似于 Docker 中的 graphdriver。
 总体来看 containerd 可以分为三个大块：Storage、Metadata 和 Runtime。
-
+![img_9.png](img_9.png)
 
 ## containerd 架构2
 安装
@@ -145,8 +147,10 @@ Snapshot Plugin
 ，首先需要安装 seccomp
 依赖：
 
+```shell
 ➜  ~ apt-get update
 ➜  ~ apt-get install libseccomp2 -y
+```
 
 由于 containerd 需要调用 runc，所以我们也需要先安装 runc，不过 containerd 提供了一个包含相关依赖的压缩包 cri-containerd-cni-${VERSION}.${OS}-${ARCH}.tar.gz
 ，可以直接使用这个包来进行安装。首先从 release 页面下载最新版本的压缩包，当前为 1.5.5 版本：
@@ -225,22 +229,30 @@ opt/containerd/cluster/gce/env
 文件的 PATH
 环境变量中：
 
+```shell
 export PATH=$PATH:/usr/local/bin:/usr/local/sbin
+```
 
 然后执行下面的命令使其立即生效：
 
+```shell
 ➜  ~ source ~/.bashrc
+```
 
 containerd 的默认配置文件为 /etc/containerd/config.toml
 ，我们可以通过如下所示的命令生成一个默认的配置：
 
+```shell
 ➜  ~ mkdir /etc/containerd
 ➜  ~ containerd config default > /etc/containerd/config.toml
+```
 
 由于上面我们下载的 containerd 压缩包中包含一个 etc/systemd/system/containerd.service
 的文件，这样我们就可以通过 systemd 来配置 containerd 作为守护进程运行了，内容如下所示：
 
+```shell
 ➜  ~ cat /etc/systemd/system/containerd.service
+
 [Unit]
 Description=containerd container runtime
 Documentation=https://containerd.io
@@ -267,6 +279,7 @@ OOMScoreAdjust=-999
 
 [Install]
 WantedBy=multi-user.target
+```
 
 这里有两个重要的参数：
 
@@ -288,16 +301,18 @@ none
 
 现在我们就可以启动 containerd 了，直接执行下面的命令即可：
 
+```shell
 ➜  ~ systemctl enable containerd --now
+```
 
 启动完成后就可以使用 containerd 的本地 CLI 工具 ctr
 了，比如查看版本：
+![img_10.png](img_10.png)
 
-
-ctr version
+```shell
 配置
 我们首先来查看下上面默认生成的配置文件 /etc/containerd/config.toml
-：
+:
 
 disabled_plugins = []
 imports = []
@@ -363,6 +378,7 @@ stream_server_port = "0"
 systemd_cgroup = false
 tolerate_missing_hugetlb_controller = true
 unset_seccomp_profile = ""
+
 
     [plugins."io.containerd.grpc.v1.cri".cni]
       bin_dir = "/opt/cni/bin"
@@ -515,6 +531,7 @@ returns = "application/vnd.oci.image.layer.v1.tar+gzip"
 address = ""
 gid = 0
 uid = 0
+```
 
 这个配置文件比较复杂，我们可以将重点放在其中的 plugins
 配置上面，仔细观察我们可以发现每一个顶级配置块的命名都是 plugins."io.containerd.xxx.vx.xxx"
@@ -524,6 +541,7 @@ uid = 0
 表示插件的 ID，我们可以通过 ctr
 查看插件列表：
 
+```shell
 ➜  ~ ctr plugin ls
 ctr plugin ls
 TYPE                            ID                       PLATFORMS      STATUS
@@ -563,17 +581,20 @@ io.containerd.grpc.v1           snapshots                -              ok
 io.containerd.grpc.v1           tasks                    -              ok
 io.containerd.grpc.v1           version                  -              ok
 io.containerd.grpc.v1           cri                      linux/amd64    ok
+```
 
 顶级配置块下面的子配置块表示该插件的各种配置，比如 cri 插件下面就分为 containerd、cni 和 registry 的配置，而 containerd 下面又可以配置各种 runtime，还可以配置默认的 runtime。比如现在我们要为镜像配置一个加速器，那么就需要在 cri 配置块下面的 registry
 配置块下面进行配置 registry.mirrors
 ：
 
+```shell
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
 endpoint = ["https://bqr1dr1n.mirror.aliyuncs.com"]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."k8s.gcr.io"]
 endpoint = ["https://registry.aliyuncs.com/k8sxio"]
+```
 
 registry.mirrors."xxx"
 : 表示需要配置 mirror 的镜像仓库，例如 registry.mirrors."docker.io"
@@ -582,8 +603,10 @@ endpoint
 : 表示提供 mirror 的镜像加速服务，比如我们可以注册一个阿里云的镜像服务来作为 docker.io 的 mirror。
 另外在默认配置中还有两个关于存储的配置路径：
 
+```shell
 root = "/var/lib/containerd"
 state = "/run/containerd"
+```
 
 其中 root
 是用来保存持久化数据，包括 Snapshots, Content, Metadata 以及各种插件的数据，每一个插件都有自己单独的目录，Containerd 本身不存储任何数据，它的所有功能都来自于已加载的插件。
@@ -601,6 +624,7 @@ state = "/run/containerd"
 直接输入 ctr
 命令即可获得所有相关的操作命令使用方式：
 
+```shell
 ➜  ~ ctr
 NAME:
 ctr -
@@ -652,6 +676,7 @@ GLOBAL OPTIONS:
 --namespace value, -n value  namespace to use with commands (default: "default") [$CONTAINERD_NAMESPACE]
 --help, -h                   show help
 --version, -v                print the version
+```
 
 镜像操作
 拉取镜像
@@ -661,6 +686,7 @@ GLOBAL OPTIONS:
 ，需要注意的是镜像地址需要加上 docker.io
 Host 地址：
 
+```shell
 ➜  ~ ctr image pull docker.io/library/nginx:alpine
 docker.io/library/nginx:alpine:                                                   resolved       |++++++++++++++++++++++++++++++++++++++|
 index-sha256:bead42240255ae1485653a956ef41c9e458eb077fcb6dc664cbc3aa9701a05ce:    exists         |++++++++++++++++++++++++++++++++++++++|
@@ -675,6 +701,7 @@ layer-sha256:29291e31a76a7e560b9b7ad3cada56e8c18d50a96cca8a2573e4f4689d7aca77:  
 elapsed: 11.9s                                                                    total:  8.7 Mi (748.1 KiB/s)
 unpacking linux/amd64 sha256:bead42240255ae1485653a956ef41c9e458eb077fcb6dc664cbc3aa9701a05ce...
 done: 410.86624ms
+```
 
 也可以使用 --platform
 选项指定对应平台的镜像。当然对应的也有推送镜像的命令 ctr image push
@@ -683,20 +710,24 @@ done: 410.86624ms
 
 列出本地镜像
 
+```shell
 ➜  ~ ctr image ls
 REF                            TYPE                                                      DIGEST                                                                  SIZE    PLATFORMS                                                                                LABELS
 docker.io/library/nginx:alpine application/vnd.docker.distribution.manifest.list.v2+json sha256:bead42240255ae1485653a956ef41c9e458eb077fcb6dc664cbc3aa9701a05ce 9.5 MiB linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x -
 ➜  ~ ctr image ls -q
 docker.io/library/nginx:alpine
+```
 
 使用 -q（--quiet）
 选项可以只打印镜像名称。
 
 检测本地镜像
 
+```shell
 ➜  ~ ctr image check
 REF                            TYPE                                                      DIGEST                                                                  STATUS         SIZE            UNPACKED
 docker.io/library/nginx:alpine application/vnd.docker.distribution.manifest.list.v2+json sha256:bead42240255ae1485653a956ef41c9e458eb077fcb6dc664cbc3aa9701a05ce complete (7/7) 9.5 MiB/9.5 MiB true
+```
 
 主要查看其中的 STATUS
 ，complete
@@ -706,27 +737,32 @@ docker.io/library/nginx:alpine application/vnd.docker.distribution.manifest.list
 
 同样的我们也可以重新给指定的镜像打一个 Tag：
 
+```shell
 ➜  ~ ctr image tag docker.io/library/nginx:alpine harbor.k8s.local/course/nginx:alpine
 harbor.k8s.local/course/nginx:alpine
 ➜  ~ ctr image ls -q
 docker.io/library/nginx:alpine
 harbor.k8s.local/course/nginx:alpine
+```
 
 删除镜像
 
 不需要使用的镜像也可以使用 ctr image rm
 进行删除：
 
+```shell
 ➜  ~ ctr image rm harbor.k8s.local/course/nginx:alpine
 harbor.k8s.local/course/nginx:alpine
 ➜  ~ ctr image ls -q
 docker.io/library/nginx:alpine
+```
 
 加上 --sync
 选项可以同步删除镜像和所有相关的资源。
 
 将镜像挂载到主机目录
 
+```shell
 ➜  ~ ctr image mount docker.io/library/nginx:alpine /mnt
 sha256:c3554b2d61e3c1cffcaba4b4fa7651c644a3354efaafa2f22cb53542f6c600dc
 /mnt
@@ -753,19 +789,26 @@ sha256:c3554b2d61e3c1cffcaba4b4fa7651c644a3354efaafa2f22cb53542f6c600dc
 └── var
 
 18 directories, 1 file
+```
 
 将镜像从主机目录上卸载
 
+```shell
 ➜  ~ ctr image unmount /mnt
 /mnt
+```
 
 将镜像导出为压缩包
 
+```shell
 ➜  ~ ctr image export nginx.tar.gz docker.io/library/nginx:alpine
+```
 
 从压缩包导入镜像
 
+```shell
 ➜  ~ ctr image import nginx.tar.gz
+```
 
 容器操作
 容器相关操作可以通过 ctr container
@@ -773,25 +816,32 @@ sha256:c3554b2d61e3c1cffcaba4b4fa7651c644a3354efaafa2f22cb53542f6c600dc
 
 创建容器
 
+```shell
 ➜  ~ ctr container create docker.io/library/nginx:alpine nginx
+```
 
 列出容器
 
+```shell
 ➜  ~ ctr container ls
 CONTAINER    IMAGE                             RUNTIME
 nginx        docker.io/library/nginx:alpine    io.containerd.runc.v2
+```
 
 同样可以加上 -q
 选项精简列表内容：
 
+```shell
 ➜  ~ ctr container ls -q
 nginx
+```
 
 查看容器详细配置
 
 类似于 docker inspect
 功能。
 
+```shell
 ➜  ~ ctr container info nginx
 {
 "ID": "nginx",
@@ -813,12 +863,15 @@ nginx
 "Spec": {
 ......
 
+```
 删除容器
 
+```shell
 ➜  ~ ctr container rm nginx
 ➜  ~ ctr container ls
 CONTAINER    IMAGE    RUNTIME
 
+```
 除了使用 rm
 子命令之外也可以使用 delete
 或者 del
@@ -833,22 +886,28 @@ CONTAINER    IMAGE    RUNTIME
 Task 相关操作可以通过 ctr task
 获取，如下我们通过 Task 来启动容器：
 
+```shell
 ➜  ~ ctr task start -d nginx
 /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
 /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+```
 
 启动容器后可以通过 task ls
 查看正在运行的容器：
 
+```shell
 ➜  ~ ctr task ls
 TASK     PID     STATUS
 nginx    3630    RUNNING
+```
 
 同样也可以使用 exec
 命令进入容器进行操作：
 
+```shell
 ➜  ~ ctr task exec --exec-id 0 -t nginx sh
 / #
+```
 
 不过这里需要注意必须要指定 --exec-id
 参数，这个 id 可以随便写，只要唯一就行。
@@ -856,43 +915,54 @@ nginx    3630    RUNNING
 暂停容器，和 docker pause
 类似的功能：
 
+```shell
 ➜  ~ ctr task pause nginx
+```
 
 暂停后容器状态变成了 PAUSED
 ：
 
+```shell
 ➜  ~ ctr task ls
 TASK     PID     STATUS
 nginx    3630    PAUSED
+```
 
 同样也可以使用 resume
 命令来恢复容器：
 
+```shell
 ➜  ~ ctr task resume nginx
 ➜  ~ ctr task ls
 TASK     PID     STATUS
 nginx    3630    RUNNING
+```
 
 不过需要注意 ctr 没有 stop 容器的功能，只能暂停或者杀死容器。杀死容器可以使用 task kill
 命令:
 
+```shell
 ➜  ~ ctr task kill nginx
 ➜  ~ ctr task ls
 TASK     PID     STATUS
 nginx    3630    STOPPED
+```
 
 杀掉容器后可以看到容器的状态变成了 STOPPED
 。同样也可以通过 task rm
 命令删除 Task：
 
+```shell
 ➜  ~ ctr task rm nginx
 ➜  ~ ctr task ls
 TASK    PID    STATUS
+```
 
 除此之外我们还可以获取容器的 cgroup 相关信息，可以使用 task metrics
 命令用来获取容器的内存、CPU 和 PID 的限额与使用量。
 
 # 重新启动容器
+```shell
 ➜  ~ ctr task metrics nginx
 ID       TIMESTAMP
 nginx    2021-08-12 08:50:46.952769941 +0000 UTC
@@ -905,10 +975,12 @@ cpuacct.usage            22467106
 cpuacct.usage_percpu     [2962708 860891 1163413 1915748 1058868 2888139 6159277 5458062]
 pids.current             9
 pids.limit               0
+```
 
 还可以使用 task ps
 命令查看容器中所有进程在宿主机中的 PID：
 
+```shell
 ➜  ~ ctr task ps nginx
 PID     INFO
 3984    -
@@ -923,6 +995,7 @@ PID     INFO
 ➜  ~ ctr task ls
 TASK     PID     STATUS
 nginx    3984    RUNNING
+```
 
 其中第一个 PID 3984
 就是我们容器中的1号进程。
@@ -930,42 +1003,52 @@ nginx    3984    RUNNING
 命名空间
 另外 Containerd 中也支持命名空间的概念，比如查看命名空间：
 
+```shell
 ➜  ~ ctr ns ls
 NAME    LABELS
 default
+```
 
 如果不指定，ctr 默认使用的是 default
 空间。同样也可以使用 ns create
 命令创建一个命名空间：
 
+```shell
 ➜  ~ ctr ns create test
 ➜  ~ ctr ns ls
 NAME    LABELS
 default
 test
+```
 
 使用 remove
 或者 rm
 可以删除 namespace：
 
+```shell
 ➜  ~ ctr ns rm test
 test
 ➜  ~ ctr ns ls
 NAME    LABELS
 default
+```
 
 有了命名空间后就可以在操作资源的时候指定 namespace，比如查看 test 命名空间的镜像，可以在操作命令后面加上 -n test
 选项：
 
+```shell
 ➜  ~ ctr -n test image ls
 REF TYPE DIGEST SIZE PLATFORMS LABELS
+```
 
 我们知道 Docker 其实也是默认调用的 containerd，事实上 Docker 使用的 containerd 下面的命名空间默认是 moby
 ，而不是 default
 ，所以假如我们有用 docker 启动容器，那么我们也可以通过 ctr -n moby
 来定位下面的容器：
 
+```shell
 ➜  ~ ctr -n moby container ls
+```
 
 同样 Kubernetes 下使用的 containerd 默认命名空间是 k8s.io
 ，所以我们可以使用 ctr -n k8s.io
