@@ -116,6 +116,12 @@ cat > /etc/docker/daemon.json <<EOF
   ]
 }
 EOF
+
+生效方法
+1.重新加载配置参数
+systemctl daemon-reload
+2.重新启动docker服务
+systemctl restart docker
 ```
 
 ## 4. 添加kubenetes 的yum源
@@ -142,6 +148,10 @@ systemctl enable kubelet
 ## 6. 部署Kubenetes Master
 
 只需要在Master 节点执行，这里的apiserve需要修改成自己的master地址
+```shell
+docker pull registry.aliyuncs.com/google_containers/coredns:v1.8.0
+docker tag registry.aliyuncs.com/google_containers/coredns:v1.8.0 registry.aliyuncs.com/google_containers/coredns/coredns:v1.8.0
+```
 
 ```shell
 [root@k8s-master ~]# kubeadm init \
