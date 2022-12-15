@@ -25,7 +25,8 @@ Linus(Linux之父)花了两周时间自己用C写了一个分布式版本控制�
 
 8. 当执行git checkout .或者git checkout -- <file>命令时，会用暂存区全部或指定的文件替换工作区的文件。这个操作很危险，会清除工作区中未添加到暂存区的改动。
 
-9. 当执行git checkout HEAD .或者git checkout HEAD <file>命令时，会用HEAD指向的master分支中的全部或者部分文件替换暂存区和以及工作区中的文件。这个命令也是极具危险性的，因为不但会清除工作区中未提交的改动，也会清除暂存区中未提交的改动。
+9. 当执行git checkout HEAD .或者git checkout HEAD <file>
+   命令时，会用HEAD指向的master分支中的全部或者部分文件替换暂存区和以及工作区中的文件。这个命令也是极具危险性的，因为不但会清除工作区中未提交的改动，也会清除暂存区中未提交的改动。
 
 2. 基本命令
 
@@ -53,8 +54,8 @@ git config --list命令可以列出当前Git所有的配置信息。
 
 对于第二种方式，也是最常用的方式，比如你在 GitHub 上（或者其他代码托管网站）已经建立了一个项目，你就可以将该项目从远程克隆到本地，这就有了该项目在本地的 Git 仓库。
 
-$ git clone git@
-github.com:goto456/leetcode.git // 通过ssh方式克隆$ git clone https://github.com/goto456/leetcode.git // 通过https方式克隆
+$ git clone git@ github.com:goto456/leetcode.git // 通过ssh方式克隆$ git clone https://github.com/goto456/leetcode.git //
+通过https方式克隆
 
 以上2种方式有如下区别：
 
@@ -66,19 +67,20 @@ github.com:goto456/leetcode.git // 通过ssh方式克隆$ git clone https://gith
 
 2.4. ssh-keygen: 生成SSH公钥
 
-生成公钥之前先检查系统中是否已经有了公钥，公钥一般在~/.ssh/目录下。如果该目录下存在id_rsa.pub文件，这就是公钥（id_rsa 文件是私钥）；如果不存在此文件，甚至连.ssh目录都不存在，则需要用 ssh-keygen 命令来生成。如下所示：
+生成公钥之前先检查系统中是否已经有了公钥，公钥一般在~/.ssh/目录下。如果该目录下存在id_rsa.pub文件，这就是公钥（id_rsa 文件是私钥）；如果不存在此文件，甚至连.ssh目录都不存在，则需要用 ssh-keygen
+命令来生成。如下所示：
 
 $ ssh-keygen // 然后一直按回车键
 
 这就可以生成 SSH key 了，公钥id_rsa.pub文件的内容大致如下所示：
 
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/bdrJjo6HNCuzhpTZNVsTju5NnksTca2kRzfbZlFs+8S4bs8hTlo6aV/GJPkTT0zxJfuOgfd4B4O8Xh0NQg51Zl4yCsFdnIKFA0tgBOg/H5oi48Ypoo8h3LO+S8gd8HR5eqndjINx3kCrQx4gISCW25d7GKTm3c40YPoUCIL0Zg4+iuu2ioeVCpv+FSCKhlcrYew7c2aEe3p/oOmATT3UX9S4t94qzy8KkxRlnQ4a8zQ3OTRE23r7+PPHGN8oBAen//NQNn9COUhqU3pHfvtxqYrG1Blhf0t6HhkHz9Fd8StCUIDQv7yHHvuuPFumh3/8PNG8DDPQqWsqXmK2XozT
+ssh-rsa
+AAAAB3NzaC1yc2EAAAADAQABAAABAQC/bdrJjo6HNCuzhpTZNVsTju5NnksTca2kRzfbZlFs+8S4bs8hTlo6aV/GJPkTT0zxJfuOgfd4B4O8Xh0NQg51Zl4yCsFdnIKFA0tgBOg/H5oi48Ypoo8h3LO+S8gd8HR5eqndjINx3kCrQx4gISCW25d7GKTm3c40YPoUCIL0Zg4+iuu2ioeVCpv+FSCKhlcrYew7c2aEe3p/oOmATT3UX9S4t94qzy8KkxRlnQ4a8zQ3OTRE23r7+PPHGN8oBAen//NQNn9COUhqU3pHfvtxqYrG1Blhf0t6HhkHz9Fd8StCUIDQv7yHHvuuPFumh3/8PNG8DDPQqWsqXmK2XozT
 
 2.5. git status 查看当前状态
 
 可以在任何时候使用该命令查看当前的状态。一般会显示当前所处的分支，以及当前工作区是否干净，是否有文件要提交。当你克隆远程仓库到本地后，通过该命令查看当前状态时，显示信息如下图所示：
 ![img_1.png](image/img_1.png)
-
 
 当你修改了一个文件后，再用该命令查看当前状态，显示信息如下图所示：
 
@@ -88,7 +90,6 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/bdrJjo6HNCuzhpTZNVsTju5NnksTca2kRzfbZlFs
 
 当你新增一个文件后，用该命令查看当前状态，显示信息如下图所示：
 ![img_3.png](image/img_3.png)
-
 
 它会显示新增的文件状态是未跟踪，并且提示用git add命令将其添加到暂存区。
 
@@ -103,8 +104,8 @@ $ git add . //后面接一个点，表示将全部文件添加到暂存区
 分别执行上述2条命令后，如下图所示：
 
 ![img_4.png](image/img_4.png)
-![img_7.png](image/img_7.png)
 
+![img_7.png](image/img_7.png)
 
 将新增/修改的文件添加到暂存区后，并未提交到版本库，还需要通过git commit命令提交到版本库。
 
@@ -119,9 +120,8 @@ $ git commit -am "变更的说明信息" //加上-a参数，则不需要上一�
 分别执行上述2条命令后，如下图所示：
 
 ![img_8.png](image/img_8.png)
+
 ![img_9.png](image/img_9.png)
-
-
 
 注：第2条命令一般在不想把新增的文件提交到版本库时用的比较多
 
@@ -138,8 +138,8 @@ $ git log --graph //以图形的方式查看历史（这个我比较常用，能
 执行后，如下图所示：
 
 ![img_10.png](image/img_10.png)
-![img_11.png](image/img_11.png)
 
+![img_11.png](image/img_11.png)
 
 可以看出第2个图的左边显示出了分支的图形
 
@@ -158,20 +158,25 @@ $ git diff README.md //后面接文件名，表示只显示该文件的变更
 2.10. git reset: 回退版本
 
 常用于回退版本或者在各个版本间进行跳跃切换。 我们可以先用 git log 看一下当前历史版本，如下图所示：
+
 ![img_13.png](image/img_13.png)
 
-
 如果要回退到前一个版本，则只需要输入：git reset HEAD~1，执行完再看一下历史版本：
+
 ![img_14.png](image/img_14.png)
+
 我们已经回退到前一个版本了。
 
 如果需要回退到前2个版本，命令是：git reset HEAD~2，回退到前n个版本就是：git reset HEAD~n注意：在 Git 中，用 HEAD 表示指向当前版本的指针
 
 如果需要回退到任何一个版本，则需要替换成该版本的 commit id 就可以了，例如：git reset a8336834b50daafa0793370，执行完再看一下历史：
+
 ![img_5.png](image/img_5.png)
+
 发现我们已经回退到该版本了。
 
-一般情况下会加一个 --hard 参数：git reset --hard HEAD~1 或 git reset --hard a8336834b50daafa0793370，表示回退到某个版本并且丢弃调工作区进行的修改，而不加该参数表示回退到某个版本但保留工作区的修改。
+一般情况下会加一个 --hard 参数：git reset --hard HEAD~1 或 git reset --hard
+a8336834b50daafa0793370，表示回退到某个版本并且丢弃调工作区进行的修改，而不加该参数表示回退到某个版本但保留工作区的修改。
 
 2.11. git push: 推送本地分支到远程
 
@@ -194,15 +199,21 @@ $ git diff README.md //后面接文件名，表示只显示该文件的变更
 3.1. git branch: 分支操作
 
 命令：git branch 用于显示本地所有分支以及当前所在哪个分支。
+
 ![img_6.png](image/img_6.png)
+
 图中显示本地有 master 和 dev 两个分支，并且正处在 master 分支上。
 
 命令：git branch branchName 用于新建名为 branchName 的新分支。
+
 ![img_15.png](image/img_15.png)
+
 图中新建了一个名为 test 的新分支。
 
 命令：git branch -d branchName 用于删除名为 branchName 的分支。
+
 ![img_16.png](image/img_16.png)
+
 图中删除了一个名为 test 的分支。
 
 命令：git branch -D branchName 用于强制删除分支。
@@ -212,11 +223,15 @@ $ git diff README.md //后面接文件名，表示只显示该文件的变更
 该命令除了进行分支间切换功能外，还可以用来丢弃工作区中的修改内容，这里就不作介绍了，仅介绍分之间的切换功能。
 
 命令：git checkout branchName 用于从当前分支切换到名为 branchName 的分支上。
+
 ![img_17.png](image/img_17.png)
+
 图中先显示在 master 分支上，后来切换到了 dev 分支上。
 
 命令：git checkout -b branchName 用于新建名为 branchName 的分支并切换到该分支上。
+
 ![img_18.png](image/img_18.png)
+
 图中新建了 test 分支并切换到了该分支上。注意与 git branch 新建分支的区别，此处除了新建分支外还进行了切换操作
 
 3.3. git merge: 合并分支
@@ -226,7 +241,7 @@ $ git diff README.md //后面接文件名，表示只显示该文件的变更
 1. fast-forward 方式合并：命令：git merge dev
 
 ![img_19.png](image/img_19.png)
-   
+
 2. 非fast-forward 方式合并：命令：git merge dev
 
 ![img_20.png](image/img_20.png)
@@ -243,13 +258,16 @@ $ git diff README.md //后面接文件名，表示只显示该文件的变更
 
 由图可知，rebase 操作相当于将 C3 节点拿下来换了一个位置重新放置。最后不会产生合并的痕迹，所有分支都是同一条直线。
 
-我们来看一个详细的例子：你从 master 分支的 C2 上创建了一个新分支 server，为服务端添加了一些功能，提交了 C3 和 C4。 然后从 C3 上创建了特性分支 client，为客户端添加了一些功能，提交了 C8 和 C9。 最后，你回到 server 分支，又提交了 C10。
+我们来看一个详细的例子：你从 master 分支的 C2 上创建了一个新分支 server，为服务端添加了一些功能，提交了 C3 和 C4。 然后从 C3 上创建了特性分支 client，为客户端添加了一些功能，提交了 C8 和 C9。
+最后，你回到 server 分支，又提交了 C10。
 
 ![img_22.png](image/img_22.png)
 
-假设你希望将 client 中的修改合并到主分支并发布，但暂时并不想合并 server 中的修改，因为它们还需要经过更全面的测试。这时，你就可以使用 git rebase 命令的 --onto 选项，选中在 client 分支里但不在 server 分支里的修改（即 C8 和 C9），将它们在 master 分支上重放：
+假设你希望将 client 中的修改合并到主分支并发布，但暂时并不想合并 server 中的修改，因为它们还需要经过更全面的测试。这时，你就可以使用 git rebase 命令的 --onto 选项，选中在 client 分支里但不在
+server 分支里的修改（即 C8 和 C9），将它们在 master 分支上重放：
 
-命令：git rebase --onto master server client以上命令的意思是："取出 client 分支，找出处于 client 分支和 server 分支的共同祖先之后的修改，然后把它们在 master 分支上重放一遍"。 这理解起来有一点复杂，不过效果非常酷。
+命令：git rebase --onto master server client以上命令的意思是："取出 client 分支，找出处于 client 分支和 server 分支的共同祖先之后的修改，然后把它们在 master
+分支上重放一遍"。 这理解起来有一点复杂，不过效果非常酷。
 
 ![img_23.png](image/img_23.png)
 
@@ -279,7 +297,8 @@ $ git branch -d client$ git branch -d server
 
 ![img_27.png](image/img_27.png)
 
-上图中我想把 ruby_client 分支上的 e43a6 这个节点合并到 master 分支上，但不需要 5ddae 这个节点，那么我们就可以使用下面的命令：$ git checkout master 先切换到 master 分支$ git cherry-pick e43a6 将 e43a6 节点挑拣合并到当前分支完成后如下图所示：
+上图中我想把 ruby_client 分支上的 e43a6 这个节点合并到 master 分支上，但不需要 5ddae 这个节点，那么我们就可以使用下面的命令：$ git checkout master 先切换到 master 分支$
+git cherry-pick e43a6 将 e43a6 节点挑拣合并到当前分支完成后如下图所示：
 
 ![img_28.png](image/img_28.png)
 
@@ -293,8 +312,8 @@ $ git branch -d client$ git branch -d server
 
 ![img_29.png](image/img_29.png)
 
-上图中显示了当前的历史提交，当我要撤销
-ab1591eb4e06c1e93fdd50126b9fab8a88d89155 这个节点时，执行如下命令：命令：git revert ab1591eb4e06c1e93fdd50126b9fab8a88d89155
+上图中显示了当前的历史提交，当我要撤销 ab1591eb4e06c1e93fdd50126b9fab8a88d89155 这个节点时，执行如下命令：命令：git revert
+ab1591eb4e06c1e93fdd50126b9fab8a88d89155
 
 ![img_30.png](image/img_30.png)
 
@@ -357,14 +376,14 @@ ab1591eb4e06c1e93fdd50126b9fab8a88d89155 为这个节点打上 v1.0 的标签
 
 3. test 分支：是用于测试的分支，测试人员可以将自己开发分支中的修改合并到 test 分支在测试环境进行测试，一般该分支不合并到任何分支；
 
-4. feature_xx 分支：是用户开发自己模块功能的特征分支，可以叫 feature_login, feature_ui, feature_payment 等与开发的功能相关的名称，该分支上的功能开发完、测试无误后可合并到 dev 分支上。
+4. feature_xx 分支：是用户开发自己模块功能的特征分支，可以叫 feature_login, feature_ui, feature_payment 等与开发的功能相关的名称，该分支上的功能开发完、测试无误后可合并到 dev
+   分支上。
 
 5.2 普通开发人员的操作
 
 普通开发人员，一般按照如下几个步骤来进行开发、测试工作就可以了：
 
-1. 将远程 dev 分支 clone 到本地，例如：git clone git@
-   github.com:goto456/test.git；
+1. 将远程 dev 分支 clone 到本地，例如：git clone git@ github.com:goto456/test.git；
 
 2. 从 dev 分支拉出（新建）自己的 feature 分支用于开发，例如：git checkout -b feature_login；
 
@@ -374,11 +393,13 @@ ab1591eb4e06c1e93fdd50126b9fab8a88d89155 为这个节点打上 v1.0 的标签
 
 5. 如果需要在测试环境进行测试，则将远程 test 分支拉到本地，例如：git branch test origin/test;
 
-6. 将自己的 feature 分支合并到 test 分支，并将 test 分支 push 到远程，例如：git rebase test, git checkout test, git merge feature_login, git push origin test；（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）
+6. 将自己的 feature 分支合并到 test 分支，并将 test 分支 push 到远程，例如：git rebase test, git checkout test, git merge feature_login, git
+   push origin test；（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）
 
 7. 通过公司的发布平台将远程 test 分支发布到测试环境进行测试；
 
-8. 如果测试没问题或者开始就不需要测试，这可以直接将当前 feature 分支合并到 dev 分支，并 push 到远程库，例如：git rebase dev, git checkout dev, git merge feature_login, git push origin dev；（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）
+8. 如果测试没问题或者开始就不需要测试，这可以直接将当前 feature 分支合并到 dev 分支，并 push 到远程库，例如：git rebase dev, git checkout dev, git merge
+   feature_login, git push origin dev；（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）
 
 9. 这时表示该功能已经开发完成了，代码的 review 以及发布，需要团队 leader 在合并到 master 操作时进行；这时可以删除了自己的 feature 分支，例如：git branch -d feature_login；
 
@@ -390,7 +411,8 @@ ab1591eb4e06c1e93fdd50126b9fab8a88d89155 为这个节点打上 v1.0 的标签
 
 1. 先切换到 dev 分支，并拉取最新的状态，例如：git checkout dev, git pull --rebase origin dev；
 
-2. 进行代码 review 等过程后，合并到 master 分支，例如：git rebase master, git checkout master, git merge dev;（注意：我们推荐用 rebase 来合并，以保证分支的整洁、美观）
+2. 进行代码 review 等过程后，合并到 master 分支，例如：git rebase master, git checkout master, git merge dev;（注意：我们推荐用 rebase
+   来合并，以保证分支的整洁、美观）
 
 3. 为本次完成的版本打上标签，例如：git tag v1.0 -m "release version 1.0"；
 
