@@ -1,5 +1,26 @@
 # Dockerfile详解
 
+Dockerfile中有多个指令，其中常用的指令包括：
+
+```shell
+FROM:指定基础镜像
+RUN:在容器中执行命令
+COPY:将文件从主机复制到容器中
+ADD:将文件或目录从主机复制到容器中,支持解压缩
+CMD:容器启动后默认执行的命令
+ENTRYPOINT:容器启动后默认执行的命令,与CMD类似
+EXPOSE:声明容器将监听哪些端口
+ENV:设置环境变量
+ARG:设置构建参数
+WORKDIR:设置工作目录
+VOLUME:声明匿名卷或挂载主机目录到容器中
+USER:设置容器的用户名或UID
+HEALTHCHECK:设置容器的健康检查
+LABEL:设置元数据
+ONBUILD:设置触发器,当基础镜像被使用时自动执行
+STOPSIGNAL:设置容器停止信号
+```
+
 ## 环境介绍
 
 ```text

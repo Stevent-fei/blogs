@@ -40,7 +40,7 @@ docker ps -a
 docker attach 容器id
 ```
 
-缺点：只要连接容器终止，或者使用了exit这个命令 容器就会推出后台运行
+缺点：只要连接容器终止，或者使用了exit这个命令 容器就会退出后台运行
 
 2. 使用docker exec命令
 
