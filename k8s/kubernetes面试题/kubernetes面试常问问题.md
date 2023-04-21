@@ -104,7 +104,8 @@ Kubernetes的工作流程如下：
 
     4、etcd：保存集群中的所有资源对象的数据、
 
-二、工作节点主要包括以下组件： 1、kubelet：负责pod对应的容器的创建、启停等任务，同时与Master节点密切协作，实现集群管理的基本功能；
+二、工作节点主要包括以下组件：
+1、kubelet：负责pod对应的容器的创建、启停等任务，同时与Master节点密切协作，实现集群管理的基本功能；
 
 2、kube-proxy：将对service的访问转发到后端的一组pod上；
 
@@ -128,3 +129,30 @@ Pod：Pod是Kubernetes中最小的可部署单元，它包含一个或多个容�
 总之，Kubernetes的架构原理是通过Master节点和Worker节点之间的通信，以及控制平面和数据平面之间的协调来实现高度自动化的容器编排和管理。
 ```
 
+# k8s中pod node container之间的区别
+
+在Kubernetes中，Pod、Node和Container是三个不同的概念：
+
+Pod：是Kubernetes中最小的部署单元，包含一个或多个紧密关联的容器和一个共享的存储卷。Pod提供了一个抽象层，使得容器在Kubernetes中可以像一个单独的逻辑单元进行部署、调度和管理。
+
+Node：是Kubernetes中的工作节点，它是物理机器或虚拟机，用于运行Pod中的容器。Node包括物理资源（例如CPU、内存、磁盘等），以及运行容器所需的Kubernetes服务、代理和其他必要的组件。
+
+Container：是Kubernetes中的应用程序容器，它可以在Pod中运行。容器是一个独立的可执行软件包，包含应用程序、运行时环境和所有依赖项。
+
+总结来说，Pod是Kubernetes中最小的部署单元，Node是运行Pod的物理节点，而Container则是运行在Pod中的应用程序容器。在Kubernetes中，Pod、Node和Container都是非常重要的概念，理解它们之间的关系和作用可以帮助我们更好地使用Kubernetes进行容器编排和管理。
+
+# kubectl apply 和 kubectl create有什么区别
+
+```text
+kubectl apply 和 create 都可以用来创建 Kubernetes 对象，但是它们之间有一些区别：
+
+apply 可以用于更新对象，而 create 只能用于创建新对象。如果对象已经存在，使用 create 会导致错误。
+
+apply 可以使用 YAML 或 JSON 文件来定义对象，而 create 只能使用命令行参数。
+
+apply 会在对象已经存在时进行更新，而 create 会在对象已经存在时抛出错误。
+
+apply 可以进行部分更新，而 create 只能进行完整的创建。如果对象已经存在，apply 可以只更新部分字段而不影响其他字段。
+
+总之，apply 更加灵活和强大，而 create 更加简单和直接。选择哪一个取决于你的需求和使用场景。
+```
