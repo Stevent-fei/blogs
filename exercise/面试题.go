@@ -39,7 +39,7 @@ if __name__ == '__main__':
              'Ndldl,"""北京,""飞""",86.2,",""1976-,8-23,"""']
     for s in slist:
         print(segmentation(s))
- */
+*/
 
 //func main() {
 //	name := `'Jack,"写""段子""",58,1963-10-28',
