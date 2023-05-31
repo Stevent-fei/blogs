@@ -1,4 +1,4 @@
-git代理设置 
+# git代理设置 
 [不建议设置全局代理, 多环境下可能混乱 注意使用协议，能使用ssh协议尽量使用ssh协议方式 具体的代理ip和端口视情况调整，以下用端口1080示例 HTTP协议代理设置 
 1、使用命令直接设置代理 --global 表示全局，不需要可以不加
 
@@ -11,7 +11,8 @@ git config --global https.proxy ***
 # socks
 
 ```shell
-git config --global http.proxy 'socks5://127.0.0.1:1080' git config --global https.proxy 'socks5://127.0.0.1:1080'
+git config --global http.proxy 'socks5://127.0.0.1:1080' 
+git config --global https.proxy 'socks5://127.0.0.1:1080'
 ```
 
 # http
@@ -24,8 +25,8 @@ git config --global https.proxy https://127.0.0.1:1080
 # 只对github.com使用代理，其他仓库不走代理
 
 ```shell
-git config --global http.https://github.com.proxy socks5://127.0.0.1:1080 git config --global
-https.https://github.com.proxy socks5://127.0.0.1:1080
+git config --global http.https://github.com.proxy socks5://127.0.0.1:1080 
+git config --global https.https://github.com.proxy socks5://127.0.0.1:1080
 ```
 
 # 取消github代理
